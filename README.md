@@ -1,61 +1,29 @@
-# Spam Classifier 📧
+# SMS spam classification
 
-A machine learning model that classifies SMS messages as **Spam** or **Ham** (not spam), achieving **~97% accuracy** on the real UCI SMS Spam Collection dataset (5,572 messages).
+Multinomial Naive Bayes with TF-IDF features on the [UCI SMS Spam Collection](https://archive.ics.uci.edu/dataset/228/sms+spam+collection) — 5,572 real messages.
 
-## 🎯 The Problem
+```
+              precision   recall   f1-score   support
+     ham         0.97      1.00       0.98      1206
+    spam         1.00      0.78       0.88       187
+accuracy 0.9706
+```
 
-Spam filtering is a classic real-world ML problem. Every message must be quickly and accurately classified as spam or legitimate, with very few false positives (important emails being deleted).
+The two numbers worth reading together: recall on spam is 0.78, and precision on ham is 1.00. The model misses about a fifth of spam, but it has never once deleted a legitimate message in the test set.
 
-## 🔧 How it works
+For this problem that's the right way round. Missing a spam message costs the user a second of attention; deleting a real one costs them something they can't get back. Lowering the decision threshold buys spam recall and spends ham precision, and on a dataset where the classes are this lopsided that's a worse trade than the headline accuracy suggests.
 
-| Step | What happens |
-|------|-------------|
-| 1. Data | UCI SMS Spam Collection - 4,825 ham + 747 spam messages |
-| 2. Preprocessing | Lowercase, remove stop words, TF-IDF vectorization converts text to numbers |
-| 3. Model | **Multinomial Naive Bayes** - uses Bayes' theorem to compute P(spam \| words) |
-| 4. Evaluation | Accuracy, precision, recall, F1, confusion matrix |
-
-## 🧠 Why Naive Bayes?
-
-Naive Bayes is perfect for text classification because:
-- It handles high-dimensional sparse text data well
-- It's extremely fast to train and predict
-- It works surprisingly well on classification despite its "naive" independence assumption
-
-## 🚀 How to run
+Naive Bayes suits the job for a specific reason: it's fast enough to retrain per message, handles thousands of sparse features without complaint, and the independence assumption that makes it naive is a poor fit for this data that hasn't cost it much.
 
 ```bash
 pip install -r requirements.txt
 python spam_classifier.py
 ```
 
-## 📊 Results
+## Files
 
 ```
-Accuracy: 0.9706
-
-              precision    recall  f1-score   support
-         ham       0.97      1.00      0.98      1206
-        spam       1.00      0.78      0.88       187
+spam_classifier.py     # training, evaluation, confusion matrix
+data/SMSSpamCollection # UCI dataset
+requirements.txt
 ```
-
-**Key insight:** The model catches 100% of ham messages (zero false positives) and 78% of spam. If you needed to catch more spam, you could lower the decision threshold — a classic precision/recall tradeoff.
-
-## 🏗️ Project Structure
-
-```
-01-spam-classifier/
-├── spam_classifier.py     # Main script
-├── data/SMSSpamCollection # UCI dataset
-├── requirements.txt
-└── README.md
-```
-
-## 📚 ML Concepts Covered
-
-- Train/test splitting (with stratification)
-- Text preprocessing & TF-IDF vectorization
-- Naive Bayes probability theory
-- Classification metrics: accuracy, precision, recall, F1
-- Precision/recall tradeoff
-- Confusion matrix interpretation
